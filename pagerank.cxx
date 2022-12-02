@@ -1,17 +1,19 @@
 #include <iostream>
+#include <string>
+#include <vector>
+#include <memory>
+#include <stdio.h>
+#include <stdlib.h>
 
 using std::cin;
 using std::cout;
 using std::string;
 
-#include <vector>
-#include <memory>
+
 using std::make_shared;
 using std::shared_ptr;
 using std::vector;
 
-#include <stdio.h>
-#include <stdlib.h>
 
 
 
@@ -71,23 +73,63 @@ class Page{
 
 };
 
+
+class Web
+{
+    private:
+        int netsize;
+        vector<shared_ptr<Page>> pages;
+
+
+
+
+    public:
+        Web(int size)
+        {
+            netsize = size;
+            pages.resize(netsize);
+            for(int i = 0; i < size; i++)
+            {
+                auto str = std::to_string(i);
+                auto name = "Page " + str;
+                
+                pages[i] = make_shared<Page>(name);
+            }
+        }
+
+        void create_random_links(int avgLinks)
+        {
+            int n = avgLinks * netsize;
+            for(int i = 0; i < n; i++)
+            {
+                //Pick page from pages vector at random (page1 = rand page)
+
+                //Pick second page from pages vector at random (page 2 = rand page)
+
+                //Set link from page1 to page2 (page1.addlink(page2))
+            }
+        }
+
+        void print()
+        {
+            for(int i = 0; i < netsize; i++)
+            {
+                cout << pages[i]->as_string() << std::endl;
+            }
+        }
+
+
+};
+
+
+
 int main()
 {
-    auto home = Page("My home page");
-    auto homepage = make_shared<Page>("My Home Page");
-    cout << "Homepage has no links yet:" << "\n";
-    cout << homepage->as_string() << "\n";
+    int netsize = 10;
+    Web internet(netsize);
 
+    internet.print();
 
-    auto utexas = make_shared<Page>("University Home Page");
-    homepage->add_link(utexas);
-    auto searchpage = make_shared<Page>("google");
-    homepage->add_link(searchpage);
-    cout << homepage->as_string() << "\n";
-
-
-    auto newpage = homepage->random_click();
-    cout << "To: " << newpage->as_string() << "\n";
     
     return 0;
 }
