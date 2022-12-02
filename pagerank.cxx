@@ -104,16 +104,27 @@ class Web
             srand(time(NULL));
 
             // get a random number within the given number of links
-            int random;
+            int randomX, randomY;
             for(int i = 0; i < n; i++)
             {
                 //Pick page from pages vector at random (page1 = rand page)
-                random = rand() % netsize;
+                randomX = rand() % netsize;
 
                 //Pick second page from pages vector at random (page 2 = rand page)
-
+                randomY = rand() % netsize;
+                while (randomX == randomY){
+                    randomY = rand() % netsize;
+                }
                 //Set link from page1 to page2 (page1.addlink(page2))
+                auto pageX = pages[randomX];
+                auto pageY = pages[randomY];
+                pageX->add_link(pageY);
             }
+        }
+
+        auto getPage(int n)
+        {
+            return pages[n];
         }
 
         void print()
@@ -135,6 +146,11 @@ int main()
     Web internet(netsize);
 
     internet.print();
+    internet.create_random_links(5);
+
+    auto page = internet.getPage(2);
+    cout << page->as_string() << std::endl;
+    cout << page->random_click()->as_string() << std::endl;
 
     
     return 0;
