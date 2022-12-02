@@ -189,6 +189,11 @@ int main()
     {
         for (int iwalk=0; iwalk<5; iwalk++) {
             auto endpage = internet.random_walk(page,2*avglinks);
+
+            //FIGURE THIS SHIT OUT
+            // PLEASE
+            // NOW
+            // Need to find out what index endpage is in the internet.all_pages() vector
             landing_counts.at(endpage->global_ID())++;
         }
     }
