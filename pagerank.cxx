@@ -99,10 +99,16 @@ class Web
 
         void create_random_links(int avgLinks)
         {
+            
             int n = avgLinks * netsize;
+            srand(time(NULL));
+
+            // get a random number within the given number of links
+            int random;
             for(int i = 0; i < n; i++)
             {
                 //Pick page from pages vector at random (page1 = rand page)
+                random = rand() % netsize;
 
                 //Pick second page from pages vector at random (page 2 = rand page)
 
