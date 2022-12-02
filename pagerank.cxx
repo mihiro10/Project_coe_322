@@ -34,6 +34,12 @@ class Page{
             linkamount = 0;
             links.resize(1);
             name = n;
+            
+        }
+
+        int link_amount()
+        {
+            return linkamount;
         }
 
         void link(){
@@ -77,8 +83,10 @@ class Page{
 class Web
 {
     private:
+        
         int netsize;
         vector<shared_ptr<Page>> pages;
+        
 
 
 
@@ -88,6 +96,7 @@ class Web
         {
             netsize = size;
             pages.resize(netsize);
+            
             for(int i = 0; i < size; i++)
             {
                 auto str = std::to_string(i);
@@ -97,9 +106,20 @@ class Web
             }
         }
 
+        auto all_pages()
+        {
+            return pages;
+        }
+
+        auto number_of_pages()
+        {
+            return netsize;
+        }
+
         void create_random_links(int avgLinks)
         {
             
+
             int n = avgLinks * netsize;
             srand(time(NULL));
 
@@ -120,6 +140,21 @@ class Web
                 auto pageY = pages[randomY];
                 pageX->add_link(pageY);
             }
+        }
+
+        auto random_walk(shared_ptr<Page> startingPage, int length)
+        {
+            //Current page set to starting page to track which page we started at
+            shared_ptr<Page> currentPage = startingPage;
+            for(int i = 0; i < length; i++)
+            {
+                if(currentPage->link_amount() == 0)
+                {
+                    return currentPage;
+                }
+                currentPage = currentPage->random_click();
+            }
+            return currentPage;
         }
 
         auto getPage(int n)
@@ -145,12 +180,18 @@ int main()
     int netsize = 10;
     Web internet(netsize);
 
-    internet.print();
-    internet.create_random_links(5);
+    int avglinks = 5;
+    
+    internet.create_random_links(avglinks);
 
-    auto page = internet.getPage(2);
-    cout << page->as_string() << std::endl;
-    cout << page->random_click()->as_string() << std::endl;
+    vector<int> landing_counts(internet.number_of_pages(),0);
+    for ( auto page : internet.all_pages() ) 
+    {
+        for (int iwalk=0; iwalk<5; iwalk++) {
+            auto endpage = internet.random_walk(page,2*avglinks);
+            landing_counts.at(endpage->global_ID())++;
+        }
+    }
 
     
     return 0;
