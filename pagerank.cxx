@@ -25,6 +25,7 @@ class Page{
         string name;
         vector<shared_ptr<Page>> links;
         shared_ptr<Page> next{nullptr};
+        int globalID;
 
     public:
         
@@ -35,6 +36,21 @@ class Page{
             links.resize(1);
             name = n;
             
+        }
+
+        Page(string n, int id)
+        {
+            linkamount = 0;
+            links.resize(1);
+            name = n;
+            globalID = id;
+
+            
+        }
+
+        auto global_ID()
+        {
+            return globalID;
         }
 
         int link_amount()
@@ -102,7 +118,7 @@ class Web
                 auto str = std::to_string(i);
                 auto name = "Page " + str;
                 
-                pages[i] = make_shared<Page>(name);
+                pages[i] = make_shared<Page>(name, i);
             }
         }
 
