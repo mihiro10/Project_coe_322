@@ -212,8 +212,9 @@ class Web
 		           totalSteps = 1000;
 			   numSteps = 0;
 		           	
-		            if ( j == i) { j++;}	
-			   endPage = getPage(j);		    
+		            if ( j == i) { j++;}
+		            if (j>=netsize) {break;}	
+			      endPage = getPage(j);		    
 
 			    for (int w = 0; w < 100; w++){
 				while (currentPage != endPage){
@@ -225,6 +226,7 @@ class Web
 					totalSteps = numSteps;
 				}
 				numSteps = 0;
+				currentPage = startPage;
 			    }
 			    cout << "Shortest path from page " << i << " to page " << j << " is " << totalSteps << std::endl;
 			}
