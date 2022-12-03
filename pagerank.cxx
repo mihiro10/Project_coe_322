@@ -203,24 +203,24 @@ class Web
 		auto startPage = getPage(1);
 		auto endPage = getPage(2);
 		int numSteps = 0;
-		int totalSteps = 1000;
+		int totalSteps;
 
 		for( int i = 0; i < netsize; i++){
 			startPage = getPage(i);		
 		
 			for (int j = 0; j < netsize; j++){
-		           totalSteps = 1000;
+		           totalSteps = 2*netsize;
 			   numSteps = 0;
 		           	
 		            if ( j == i) { j++;}
 		            if (j>=netsize) {break;}	
 			      endPage = getPage(j);		    
 
-			    for (int w = 0; w < 100; w++){
+			    for (int w = 0; w < netsize*10; w++){
 				while (currentPage != endPage){
  	                              currentPage = random_walk(currentPage, 1);
 				      numSteps++;
-				      if (numSteps > 100){break;}	
+				      if (numSteps >= netsize){break;}	
 				}
 				if (numSteps < totalSteps){
 					totalSteps = numSteps;
