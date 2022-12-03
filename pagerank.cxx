@@ -4,6 +4,7 @@
 #include <memory>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctime>
 
 using std::cin;
 using std::cout;
@@ -190,18 +191,22 @@ class Web
 
 int main()
 {
-    int netsize = 10;
+    int netsize = 20;
     Web internet(netsize);
 
     int avglinks = 5;
     
     internet.create_random_links(avglinks);
+    
+    srand(time(NULL));
 
     vector<int> landing_counts(internet.number_of_pages(),0);
     for ( auto page : internet.all_pages() ) 
     {
         for (int iwalk=0; iwalk<5; iwalk++) {
-            auto endpage = internet.random_walk(page,2*avglinks);
+
+	    int randomSteps = rand() % 2*avglinks;
+            auto endpage = internet.random_walk(page, randomSteps);
 
             //FIGURE THIS SHIT OUT
             // PLEASE
@@ -211,6 +216,11 @@ int main()
         }
     }
 
+  for (int i = 0; i < landing_counts.size(); i++){
+
+	cout << "Page " << i << " Landed on: "  << landing_counts.at(i) << ", Total Links: " << internet.getPage(i)->link_amount() <<  std::endl;
+
+  }
     
     return 0;
 }
