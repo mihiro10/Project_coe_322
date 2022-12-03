@@ -191,6 +191,48 @@ class Web
             }
         }
 
+	int diameter()
+	{
+		
+		// for loop for starting page
+		// 	for loop for ending page
+		// 		while loop for if curr_page != ending page
+		//
+
+		auto currentPage = getPage(1);
+		auto startPage = getPage(1);
+		auto endPage = getPage(2);
+		int numSteps = 0;
+		int totalSteps = 1000;
+
+		for( int i = 0; i < netsize; i++){
+			startPage = getPage(i);		
+		
+			for (int j = 0; j < netsize; j++){
+		           totalSteps = 1000;
+			   numSteps = 0;
+		           	
+		            if ( j == i) { j++;}	
+			   endPage = getPage(j);		    
+
+			    for (int w = 0; w < 100; w++){
+				while (currentPage != endPage){
+ 	                              currentPage = random_walk(currentPage, 1);
+				      numSteps++;
+				      if (numSteps > 100){break;}	
+				}
+				if (numSteps < totalSteps){
+					totalSteps = numSteps;
+				}
+				numSteps = 0;
+			    }
+			    cout << "Shortest path from page " << i << " to page " << j << " is " << totalSteps << std::endl;
+			}
+			
+		}
+
+	}
+
 
 };
 
@@ -231,6 +273,7 @@ int main()
 	cout << "Page " << i << " Landed on: "  << landing_counts.at(i) << ", Total Links: " << internet.getPage(i)->link_amount() <<  std::endl;
 
   }
-    
+	internet.diameter(); 
+   
     return 0;
 }
