@@ -83,7 +83,7 @@ class Page{
                 throw("ERROR: no links. Need to program this CASE. \n");
             }
             // providing a seed value
-            srand(time(NULL));
+ //           srand(time(NULL));
 
             // get a random number within the given number of links
             int random = rand() % linkamount;
@@ -130,12 +130,19 @@ class Web
             return netsize;
         }
 
+
+	auto random_page()
+        {
+             int randNum = rand() % netsize;
+             return pages.at(randNum);
+        }
+
         void create_random_links(int avgLinks)
         {
             
 
             int n = avgLinks * netsize;
-            srand(time(NULL));
+ //           srand(time(NULL));
 
             // get a random number within the given number of links
             int randomX, randomY;
@@ -191,6 +198,7 @@ class Web
 
 int main()
 {
+    srand(time(NULL));
     int netsize = 20;
     Web internet(netsize);
 
@@ -198,15 +206,17 @@ int main()
     
     internet.create_random_links(avglinks);
     
-    srand(time(NULL));
+//    srand(time(NULL));
 
     vector<int> landing_counts(internet.number_of_pages(),0);
-    for ( auto page : internet.all_pages() ) 
-    {
-        for (int iwalk=0; iwalk<5; iwalk++) {
+//    for ( auto page : internet.all_pages() ) 
+      for ( int run = 1; run < 100; run++)
+     {
+        auto curPage = internet.random_page();
+        for (int iwalk=0; iwalk<=1; iwalk++) {
 
 	    int randomSteps = rand() % 2*avglinks;
-            auto endpage = internet.random_walk(page, randomSteps);
+            auto endpage = internet.random_walk(curPage, randomSteps);
 
             //FIGURE THIS SHIT OUT
             // PLEASE
