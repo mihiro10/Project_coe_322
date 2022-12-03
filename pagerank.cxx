@@ -16,9 +16,6 @@ using std::vector;
 
 
 
-
-
-
 class Page{
     private:
         int linkamount;
