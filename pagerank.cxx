@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctime>
+#include <iomanip>
+#include <fstream>
 
 using std::cin;
 using std::cout;
@@ -14,7 +16,363 @@ using std::string;
 using std::make_shared;
 using std::shared_ptr;
 using std::vector;
+using std::endl;
 
+class Matrix{
+    private:
+   // <magic stuff from you>
+        bool initalized_;
+        int rows_;
+        int columns_;
+        vector<vector<double>> m_;
+        int iters_;
+        double tol_;
+        bool flag_;
+        double solveTime_;
+        int solveIters_;
+        double error_;
+
+    public:
+
+
+        Matrix() //DONE
+        { 
+            m_ = vector<vector<double>>();
+            initalized_ = false;
+        }
+
+        Matrix(int rows, int cols)
+        {
+            rows_ = rows;
+            columns_ = cols;
+            m_ = vector<vector<double>>();
+            initalized_ = true;
+            m_.resize(rows_);
+
+            for(int i = 0; i < rows_; i++)
+            {
+                m_[i].resize(columns_);
+                for(int j = 0; j < columns_; j++)
+                {
+                    m_[i][j] = 0;
+                }
+            }
+            
+        }
+
+        void initIdentity(int n) //DONE
+        {
+            initalized_ = true;
+            rows_ = n;
+            columns_ = n;
+            m_.resize(rows_);
+            
+            for(int i = 0; i < rows_; i++)
+            {
+                m_[i].resize(columns_);
+                for(int j = 0; j < columns_; j++)
+                {
+                    
+                    
+                    if(j == i)
+                    {
+                        m_[i][j]= 1;
+                    }
+                    else
+                    {
+                        m_[i][j]= 0;
+                    }
+                    
+                }
+            }
+        }
+        
+
+        
+        bool isSquare()
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            return rows_ == columns_;
+        }
+
+        void Print(string name) // DONE
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            double num;
+            
+            double len = name.size();
+
+            cout<< name << " = ";
+
+
+            for(int i = 0; i < rows_; i++)
+            {
+                if(i != 0)
+                {
+                    for (int l= 0; l< len + 3; l++)
+                    {
+                        cout << " ";
+                    }
+                }
+                std::cout<< "|";
+                for(int j = 0; j < columns_; j++)
+                {
+                    num = m_[i][j];
+                    std::cout << num;
+                }
+                std::cout << " |" << endl;
+            }
+            cout << "\n";
+        }
+
+
+        double getVal(int row, int col)
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            if(row >= rows_ || col >= columns_ || row < 0 || col < 0)
+            {
+                cout << "[Error]: index not in Matrix" << endl;
+                exit(1);
+            }
+            
+            return m_[row][col];
+        }
+
+        void setVal(int row, int col, double val)
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            if(row >= rows_ || col >= columns_ || row < 0 || col < 0)
+            {
+                cout << "[Error]: index not in Matrix" << endl;
+                exit(1);
+            }
+            
+            m_[row][col] = val;
+        }
+
+        vector<double> Diagonal()
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            if(!isSquare())
+            {
+                cout << "[Error]: matrix is not square. Therefore it does not have a diagonal" << endl;
+            }
+            vector<double> v = vector<double>();
+            v.resize(rows_);
+            for(int i = 0; i < rows_; i++)
+            {
+                v[i] = m_[i][i];
+            }
+            return v;
+        }
+
+
+        int numRows() // DONE
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            return rows_;
+        }
+        int numCols() // DONE
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            return columns_;
+        }
+
+
+                
+
+        Matrix Multiply(double A)
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+
+            Matrix temp = Matrix(rows_, columns_);
+            double num;
+            
+
+            for(int i = 0; i < rows_; i++)
+            {
+                for (int j = 0; j < columns_; j++)
+                {
+                    num = m_[i][j] * A;
+                    
+                    temp.setVal(i,j,num);
+                }
+            }
+            return temp;
+        }
+
+        Matrix Multiply(Matrix B)
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            if (columns_ != B.numRows())
+            {
+            cout << "[Error]: Matrix multiplication invalid due to format" << endl;
+            exit(1);
+
+            }
+            double num;
+
+
+            Matrix temp = Matrix(rows_, B.numCols());
+            for(int i = 0; i < temp.numRows(); i++)
+            {
+                for (int j = 0; j < temp.numCols(); j++)
+                {
+                    num = 0;
+                    for(int l = 0; l< columns_; l++)
+                    {
+                        
+                        num += (m_[i][l] * B.getVal(l,j));
+                    }
+                    
+                    temp.setVal(i,j,num);
+                }
+            }
+            return temp;
+            
+        }
+
+        Matrix Transpose()
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+
+            Matrix temp = Matrix(columns_, rows_);
+            double num;
+            
+
+            for(int i = 0; i < rows_; i++)
+            {
+                for (int j = 0; j < columns_; j++)
+                {
+                    num = m_[i][j];
+                    
+                    temp.setVal(j,i,num);
+                }
+            }
+            return temp;
+        }
+
+        void setSolveMaxIters(int iters)
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            iters_ = iters;
+        }
+
+        void setSolveTolerance(double tol)
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            tol_ = tol;
+        }
+
+        int getSolveIters()
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            return solveIters_;
+        }
+
+        void setSolveDebugMode(bool flag)
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            flag_ = flag;
+
+        }
+
+        double getSolveTime()
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            return solveTime_;
+        }
+
+        void setSolveTime(double solveTime)
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            solveTime_ = solveTime;
+        }
+
+        void setFlag(bool flag)
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            flag_ = flag;
+        }
+
+        bool getFlag()
+        {
+            if (!initalized_)
+            {
+            cout << "[Error]: slow your roll and please initialize matrix first" << endl;
+            exit(1);
+            }
+            return flag_;
+        }
+};
 
 
 class Page{
@@ -118,6 +476,48 @@ class Web
                 
                 pages[i] = make_shared<Page>(name, i);
             }
+        }
+
+        
+
+        auto fully_connected()
+        {
+            Matrix m = Matrix(netsize, netsize);
+            m.initIdentity(netsize);
+            
+            int index;
+
+            for(int i = 0; i < netsize; i++)
+            {
+                
+                shared_ptr<Page> p = pages[i];
+                for(int j = 0; j<p->link_amount(); j++)
+                {
+                    index = p->click(j)->global_ID();
+                    
+                    m.setVal(i,index,1);
+                }
+            }
+            
+            Matrix multiplied = m;
+
+            for(int i = 0; i < netsize; i++)
+            {
+                multiplied = multiplied.Multiply(m);
+            }
+
+            for(int i = 0; i < netsize; i++)
+            {
+                for(int j = 0; j< netsize; j++)
+                {
+                    if(multiplied.getVal(i,j) == 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+
         }
 
         auto all_pages()
@@ -243,7 +643,7 @@ class Web
 int main()
 {
     srand(time(NULL));
-    int netsize = 20;
+    int netsize = 10;
     Web internet(netsize);
 
     int avglinks = 5;
@@ -251,7 +651,7 @@ int main()
     internet.create_random_links(avglinks);
     
 //    srand(time(NULL));
-
+/*
     vector<int> landing_counts(internet.number_of_pages(),0);
 //    for ( auto page : internet.all_pages() ) 
       for ( int run = 1; run < 100; run++)
@@ -275,7 +675,23 @@ int main()
 	cout << "Page " << i << " Landed on: "  << landing_counts.at(i) << ", Total Links: " << internet.getPage(i)->link_amount() <<  std::endl;
 
   }
-	internet.diameter(); 
+  */
+    auto connect = internet.fully_connected();
+    if(connect)
+    {
+        // SHORTEST PATH CAN BE 0
+        // FIX WITH JACKSON
+        internet.diameter();
+        cout << "Fully Connected" << endl;
+    }
+    else
+    {
+        cout << "Multiple Connected Components" << endl;
+    }
+     
+
+    
+    
    
     return 0;
 }
