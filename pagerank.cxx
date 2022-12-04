@@ -61,6 +61,11 @@ class Matrix{
             
         }
 
+        void setRow(int r, vector<double> row)
+        {
+            m_[r] = row;
+        }
+
         void initIdentity(int n) //DONE
         {
             initalized_ = true;
@@ -381,12 +386,17 @@ class Matrix{
 class ProbabilityDistribution
 {
     private:
-        vector<float> numbers;
+        vector<double> numbers;
 
     public:
         ProbabilityDistribution(int size)
         {  
-            numbers = vector<float>(size, 0);
+            numbers = vector<double>(size, 0);
+        }
+
+        vector<double> getVec()
+        {
+            return numbers;
         }
 
         float getProb(int index)
@@ -549,6 +559,7 @@ class Web
         vector<shared_ptr<Page>> pages;
         vector<ProbabilityDistribution> distributions;
         Matrix matrix_form;
+        Matrix distributions_matrix;
         
 
 
@@ -574,10 +585,15 @@ class Web
             return distributions;
         }
 
+        Matrix get_distMatrix()
+        {
+            return distributions_matrix;
+        }
+
         void setDistributions()
         {
             distributions = vector<ProbabilityDistribution>(netsize, NULL);
-            
+            distributions_matrix = Matrix(netsize,netsize);
 
             shared_ptr<Page> page;
 
@@ -585,6 +601,8 @@ class Web
             {
                 page = pages[i];
                 distributions[i] = page->distribution();
+                distributions_matrix.setRow(i, distributions[i].getVec());
+
             }
         }
 
@@ -771,10 +789,10 @@ int main()
     internet.setDistributions();
     vector<ProbabilityDistribution> dis = internet.getDistributions();
 
-    for(int i = 0; i < dis.size(); i++)
-    {
-        cout << dis[i].as_string() << "DONE" << endl;
-    }
+    Matrix a = internet.get_distMatrix();
+    a.Print("A");
+
+    
 
     
 //    srand(time(NULL));
