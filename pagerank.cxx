@@ -18,6 +18,7 @@ using std::shared_ptr;
 using std::vector;
 using std::endl;
 
+
 class Matrix{
     private:
    // <magic stuff from you>
@@ -638,6 +639,61 @@ class Web
 
 };
 
+class ProbabilityDistribution
+{
+    private:
+        vector<float> numbers;
+
+    public:
+        ProbabilityDistribution(int size)
+        {  
+            numbers = vector<float>(size, 0);
+        }
+
+        float getProb(int index)
+        {
+            return numbers.at(index);
+        }
+
+        void set_random()
+        {
+            float random;
+
+            for(int i = 0; i < numbers.size(); i++)
+            {
+                random = rand() % 10;
+                numbers[i] = random;
+            }
+        }
+
+        void normalize()
+        {
+            float sum = 0;
+            for(int i = 0; i < numbers.size(); i++)
+            {
+                sum+= numbers.at(i);
+            }
+
+            for(int i = 0; i < numbers.size(); i++)
+            {
+                numbers[i] /= sum;
+            }
+        }
+
+        string as_string()
+        {
+            string str = "";
+            for(int i = 0; i < numbers.size(); i++)
+            {
+                str = str + std::to_string(i) + ": " + std::to_string(numbers[i]) + "\n"; 
+            }
+
+            return str;
+        }
+
+
+};
+
 
 
 int main()
@@ -676,7 +732,7 @@ int main()
 
   }
   */
-    auto connect = internet.fully_connected();
+    /*auto connect = internet.fully_connected();
     if(connect)
     {
         // SHORTEST PATH CAN BE 0
@@ -688,9 +744,14 @@ int main()
     {
         cout << "Multiple Connected Components" << endl;
     }
-     
+     */
 
-    
+    ProbabilityDistribution prob = ProbabilityDistribution(10);
+    prob.set_random();
+    prob.normalize();
+
+    string g = prob.as_string();
+    cout << g;
     
    
     return 0;
