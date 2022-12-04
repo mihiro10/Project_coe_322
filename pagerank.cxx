@@ -376,6 +376,68 @@ class Matrix{
 };
 
 
+
+
+class ProbabilityDistribution
+{
+    private:
+        vector<float> numbers;
+
+    public:
+        ProbabilityDistribution(int size)
+        {  
+            numbers = vector<float>(size, 0);
+        }
+
+        float getProb(int index)
+        {
+            return numbers.at(index);
+        }
+
+        void set_random()
+        {
+            float random;
+
+            for(int i = 0; i < numbers.size(); i++)
+            {
+                random = rand() % 10;
+                numbers[i] = random;
+            }
+        }
+
+        void normalize()
+        {
+            float sum = 0;
+            for(int i = 0; i < numbers.size(); i++)
+            {
+                sum+= numbers.at(i);
+            }
+
+            for(int i = 0; i < numbers.size(); i++)
+            {
+                numbers[i] /= sum;
+            }
+        }
+
+        string as_string()
+        {
+            string str = "";
+            for(int i = 0; i < numbers.size(); i++)
+            {
+                str = str + std::to_string(i) + ": " + std::to_string(numbers[i]) + "\n"; 
+            }
+
+            return str;
+        }
+
+        void setProb(int index, float num)
+        {
+            numbers[index] = num;
+        }
+
+
+};
+
 class Page{
     private:
         int linkamount;
@@ -383,6 +445,7 @@ class Page{
         vector<shared_ptr<Page>> links;
         shared_ptr<Page> next{nullptr};
         int globalID;
+        int totalPages;
 
     public:
         
@@ -401,6 +464,17 @@ class Page{
             links.resize(1);
             name = n;
             globalID = id;
+
+            
+        }
+
+        Page(string n, int id, int length)
+        {
+            linkamount = 0;
+            links.resize(1);
+            name = n;
+            globalID = id;
+            totalPages = length;
 
             
         }
@@ -450,6 +524,20 @@ class Page{
             return click(random);
         }
 
+        ProbabilityDistribution distribution()
+        {
+            shared_ptr<Page> page;
+            ProbabilityDistribution dist = ProbabilityDistribution(totalPages);
+            for(int i =0; i < linkamount; i++)
+            {
+                page = links[i];
+                int pageIndex = page->global_ID();
+                dist.setProb(pageIndex,dist.getProb(pageIndex)+1);
+            }
+            dist.normalize();
+            return dist;
+        }
+
 };
 
 
@@ -459,6 +547,8 @@ class Web
         
         int netsize;
         vector<shared_ptr<Page>> pages;
+        vector<ProbabilityDistribution> distributions;
+        Matrix matrix_form;
         
 
 
@@ -475,10 +565,33 @@ class Web
                 auto str = std::to_string(i);
                 auto name = "Page " + str;
                 
-                pages[i] = make_shared<Page>(name, i);
+                pages[i] = make_shared<Page>(name, i, size);
             }
         }
 
+        vector<ProbabilityDistribution> getDistributions()
+        {
+            return distributions;
+        }
+
+        void setDistributions()
+        {
+            distributions = vector<ProbabilityDistribution>(netsize, NULL);
+            
+
+            shared_ptr<Page> page;
+
+            for(int i = 0; i < netsize; i++)
+            {
+                page = pages[i];
+                distributions[i] = page->distribution();
+            }
+        }
+
+        ProbabilityDistribution globalclick(ProbabilityDistribution currentstate)
+        {
+
+        }
         
 
         auto fully_connected()
@@ -499,6 +612,8 @@ class Web
                     m.setVal(i,index,1);
                 }
             }
+
+            matrix_form = m;
             
             Matrix multiplied = m;
 
@@ -639,60 +754,7 @@ class Web
 
 };
 
-class ProbabilityDistribution
-{
-    private:
-        vector<float> numbers;
 
-    public:
-        ProbabilityDistribution(int size)
-        {  
-            numbers = vector<float>(size, 0);
-        }
-
-        float getProb(int index)
-        {
-            return numbers.at(index);
-        }
-
-        void set_random()
-        {
-            float random;
-
-            for(int i = 0; i < numbers.size(); i++)
-            {
-                random = rand() % 10;
-                numbers[i] = random;
-            }
-        }
-
-        void normalize()
-        {
-            float sum = 0;
-            for(int i = 0; i < numbers.size(); i++)
-            {
-                sum+= numbers.at(i);
-            }
-
-            for(int i = 0; i < numbers.size(); i++)
-            {
-                numbers[i] /= sum;
-            }
-        }
-
-        string as_string()
-        {
-            string str = "";
-            for(int i = 0; i < numbers.size(); i++)
-            {
-                str = str + std::to_string(i) + ": " + std::to_string(numbers[i]) + "\n"; 
-            }
-
-            return str;
-        }
-
-
-};
 
 
 
@@ -705,6 +767,15 @@ int main()
     int avglinks = 5;
     
     internet.create_random_links(avglinks);
+
+    internet.setDistributions();
+    vector<ProbabilityDistribution> dis = internet.getDistributions();
+
+    for(int i = 0; i < dis.size(); i++)
+    {
+        cout << dis[i].as_string() << "DONE" << endl;
+    }
+
     
 //    srand(time(NULL));
 /*
@@ -746,13 +817,14 @@ int main()
     }
      */
 
+    /* Testing probability distribution
     ProbabilityDistribution prob = ProbabilityDistribution(10);
     prob.set_random();
     prob.normalize();
 
     string g = prob.as_string();
     cout << g;
-    
+    */
    
     return 0;
 }
