@@ -821,44 +821,47 @@ int main()
     ProbabilityDistribution v = ProbabilityDistribution(netsize);
     vector<double> vec = vector<double>(netsize, 0);
     
-    double error = 10;
-
+    double maxErr = 10;
+    
+    v.setVec(vec);
     v.set_random();
     v.normalize();
     
+    //v.set_random();
+    //v.normalize();
+    vector<double> vec1,vec2;
     int mag1;
     int mag2;
     int sum;
     int count = 0;
+    double error;
     
-    while (error > .0000000000001)
+    while (maxErr > .00001)
     {
-        sum = 0;
-        for(int i = 0; i<netsize; i++)
-        {
-            sum+= v.getVec()[i];
-            
-        }
-        mag1 = sqrt(sum);
+        maxErr = 0;
+        vec1 = v.getVec();
 
         v = internet.globalclick(v);
 
-        sum = 0;
-        for(int i = 0; i<netsize; i++)
+        vec2 = v.getVec();
+        
+        for(int i = 0; i < netsize; i++)
         {
-            sum+= v.getVec()[i];
-            
+            error = abs(vec2[i]- vec1[i]);
+            if(error > maxErr)
+            {
+                maxErr = error;
+            }
         }
-        mag2 = sqrt(sum);
 
-        error = abs(mag2 - mag1);
+
+        
         count++;
     }
     
     
 
-    cout << v.as_string();
-
+     
     cout << count << endl;
     
 
@@ -879,10 +882,7 @@ int main()
 	    int randomSteps = rand() % 2*avglinks;
             auto endpage = internet.random_walk(curPage, randomSteps);
 
-            //FIGURE THIS SHIT OUT
-            // PLEASE
-            // NOW
-            // Need to find out what index endpage is in the internet.all_pages() vector
+            
             landing_counts.at(endpage->global_ID())++;
         }
     }
