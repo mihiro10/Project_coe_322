@@ -61,6 +61,11 @@ class Matrix{
             
         }
 
+        vector<double> getRow(int index)
+        {
+            return m_[index];
+        }
+
         void setRow(int r, vector<double> row)
         {
             m_[r] = row;
@@ -399,6 +404,11 @@ class ProbabilityDistribution
             return numbers;
         }
 
+        void setVec(vector<double> vec)
+        {
+            numbers = vec;
+        }
+
         float getProb(int index)
         {
             return numbers.at(index);
@@ -422,10 +432,12 @@ class ProbabilityDistribution
             {
                 sum+= numbers.at(i);
             }
-
-            for(int i = 0; i < numbers.size(); i++)
+            if(sum!= 0)
             {
-                numbers[i] /= sum;
+                for(int i = 0; i < numbers.size(); i++)
+                {
+                    numbers[i] /= sum;
+                }
             }
         }
 
@@ -444,6 +456,8 @@ class ProbabilityDistribution
         {
             numbers[index] = num;
         }
+
+        
 
 
 };
@@ -608,7 +622,17 @@ class Web
 
         ProbabilityDistribution globalclick(ProbabilityDistribution currentstate)
         {
+            Matrix v = Matrix(1, currentstate.getVec().size());
+            
+            v.setRow(0, currentstate.getVec());
+            
+            Matrix temp = v.Multiply(distributions_matrix);
 
+            ProbabilityDistribution k = ProbabilityDistribution(currentstate.getVec().size());
+            
+            k.setVec(temp.getRow(0));
+
+            return k;
         }
         
 
@@ -790,7 +814,19 @@ int main()
     vector<ProbabilityDistribution> dis = internet.getDistributions();
 
     Matrix a = internet.get_distMatrix();
-    a.Print("A");
+    
+    a.Print("A = :");
+
+    ProbabilityDistribution v = ProbabilityDistribution(netsize);
+    vector<double> vec = vector<double>(netsize, 0);
+    vec[3] = 1;
+    
+    v.setVec(vec);
+    
+    ProbabilityDistribution f = internet.globalclick(v);
+    
+
+    cout << f.as_string();
 
     
 
