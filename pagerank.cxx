@@ -626,6 +626,29 @@ class Web
             Matrix v = Matrix(1, currentstate.getVec().size());
             
             v.setRow(0, currentstate.getVec());
+
+            ProbabilityDistribution r = ProbabilityDistribution(currentstate.getVec().size());
+
+            for(int i = 0; i < distributions_matrix.numRows(); i++)
+            {
+                for (int j = 0; j < distributions_matrix.numCols(); j++)
+                {
+                    if(distributions_matrix.getVal(i,j) != 0)
+                    {
+                        break;
+                    }
+                    if(j + 1 == distributions_matrix.numCols())
+                    {
+                        //Set row to random distribution to simulate picking a random page on the web
+                        // This is for case of no outbound links
+                        r.set_random();
+                        r.normalize();
+
+                        distributions_matrix.setRow(i, r.getVec());
+
+                    }
+                }
+            }
             
             Matrix temp = v.Multiply(distributions_matrix);
 
