@@ -7,6 +7,7 @@
 #include <ctime>
 #include <iomanip>
 #include <fstream>
+#include <cmath>
 
 using std::cin;
 using std::cout;
@@ -815,19 +816,54 @@ int main()
 
     Matrix a = internet.get_distMatrix();
     
-    a.Print("A = :");
+    
 
     ProbabilityDistribution v = ProbabilityDistribution(netsize);
     vector<double> vec = vector<double>(netsize, 0);
-    vec[3] = 1;
     
-    v.setVec(vec);
+    double error = 10;
+
+    v.set_random();
+    v.normalize();
     
-    ProbabilityDistribution f = internet.globalclick(v);
+    int mag1;
+    int mag2;
+    int sum;
+    int count = 0;
+    
+    while (error > .0000000000001)
+    {
+        sum = 0;
+        for(int i = 0; i<netsize; i++)
+        {
+            sum+= v.getVec()[i];
+            
+        }
+        mag1 = sqrt(sum);
+
+        v = internet.globalclick(v);
+
+        sum = 0;
+        for(int i = 0; i<netsize; i++)
+        {
+            sum+= v.getVec()[i];
+            
+        }
+        mag2 = sqrt(sum);
+
+        error = abs(mag2 - mag1);
+        count++;
+    }
+    
     
 
-    cout << f.as_string();
+    cout << v.as_string();
 
+    cout << count << endl;
+    
+
+    
+    
     
 
     
