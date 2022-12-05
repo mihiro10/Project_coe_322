@@ -524,7 +524,9 @@ class Page{
         void add_link(shared_ptr<Page> p)
         {
             // allocating new link into a point
+            
             links[linkamount] = p;
+            
             linkamount++;
             links.resize(linkamount+1);
         }
@@ -575,6 +577,8 @@ class Web
         vector<ProbabilityDistribution> distributions;
         Matrix matrix_form;
         Matrix distributions_matrix;
+
+        int artificialSize;
         
 
 
@@ -595,6 +599,23 @@ class Web
             }
         }
 
+        Web(int size, int artSize)
+        {
+            artificialSize = artSize;
+            netsize = size;
+            pages.resize(artificialSize);
+            
+            for(int i = 0; i < artificialSize; i++)
+            {
+                auto str = std::to_string(i);
+                auto name = "Page " + str;
+                
+                pages[i] = make_shared<Page>(name, i, artificialSize);
+            }
+        }
+
+        
+
         vector<ProbabilityDistribution> getDistributions()
         {
             return distributions;
@@ -613,6 +634,22 @@ class Web
             shared_ptr<Page> page;
 
             for(int i = 0; i < netsize; i++)
+            {
+                page = pages[i];
+                distributions[i] = page->distribution();
+                distributions_matrix.setRow(i, distributions[i].getVec());
+
+            }
+        }
+
+        void setArtificialDistributions()
+        {
+            distributions = vector<ProbabilityDistribution>(artificialSize, NULL);
+            distributions_matrix = Matrix(artificialSize, artificialSize);
+
+            shared_ptr<Page> page;
+
+            for(int i = 0; i < artificialSize; i++)
             {
                 page = pages[i];
                 distributions[i] = page->distribution();
@@ -828,21 +865,40 @@ int main()
 {
     srand(time(NULL));
     int netsize = 10;
-    Web internet(netsize);
+    int artificialSize = 40;
+
+
+    //Web internet(netsize);
+
+    Web internet(netsize,artificialSize);
 
     int avglinks = 5;
     
     internet.create_random_links(avglinks);
 
-    internet.setDistributions();
+    shared_ptr<Page> google;
+    shared_ptr<Page> inflation;
+    for(int i = netsize; i < artificialSize; i++)
+    {
+        
+        google = internet.getPage(i);
+        
+        inflation = internet.getPage(artificialSize-1);
+        
+        google->add_link(inflation);
+        
+    }
+
+    internet.setArtificialDistributions();
     vector<ProbabilityDistribution> dis = internet.getDistributions();
 
     Matrix a = internet.get_distMatrix();
     
     
 
-    ProbabilityDistribution v = ProbabilityDistribution(netsize);
-    vector<double> vec = vector<double>(netsize, 0);
+
+    ProbabilityDistribution v = ProbabilityDistribution(artificialSize);
+    vector<double> vec = vector<double>(artificialSize, 0);
     
     double maxErr = 10;
     
@@ -868,7 +924,7 @@ int main()
 
         vec2 = v.getVec();
         
-        for(int i = 0; i < netsize; i++)
+        for(int i = 0; i < artificialSize; i++)
         {
             error = abs(vec2[i]- vec1[i]);
             if(error > maxErr)
@@ -883,10 +939,12 @@ int main()
     }
     
     
-
+    cout << "Artifically inflated\n" << v.as_string() << endl;
      
-    cout << count << endl;
+    //cout << count << endl;
     
+
+
 
     
     
