@@ -1,4 +1,6 @@
-// ADD EID  
+// ADD EID  & add better comments
+// prob can just type straight from git hub
+
 
 #include <iostream>
 #include <string>
