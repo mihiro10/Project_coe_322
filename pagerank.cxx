@@ -1,3 +1,6 @@
+// JET3522, LL34958, MS84579
+// JACKSON THETFORD, LUCA LABARDINI, MIHIRO SUZUKI
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -387,9 +390,6 @@ class Matrix{
         }
 };
 
-
-
-
 class ProbabilityDistribution
 {
     private:
@@ -583,9 +583,6 @@ class Web
         int artificialSize;
         
 
-
-
-
     public:
     // Basic constructor with web size as parameter
         Web(int size)
@@ -763,9 +760,7 @@ class Web
         void create_random_links(int avgLinks)
         {
             
-
             int n = avgLinks * netsize;
- //           srand(time(NULL));
 
             // get a random number within the given number of links
             int randomX, randomY;
@@ -818,11 +813,6 @@ class Web
 	int diameter()
 	{
         
-		
-		// for loop for starting page
-		// 	for loop for ending page
-		// 		while loop for if curr_page != ending page
-		//
 
 		auto currentPage = getPage(1);
 		auto startPage = getPage(1);
@@ -830,22 +820,27 @@ class Web
 		int numSteps = 0;
 		int totalSteps;
 
+        int vecPosition = 0;
+        vector<int> shortestPath((netsize*netsize) - netsize); 
+        int longestPath = 0;
+        // 2 forloops to go from any page A to any Page B, 
+        // while loop runs that specific walk many times to find shortest path.
 		for( int i = 0; i < netsize; i++){
 			startPage = getPage(i);		
 		
 			for (int j = 0; j < netsize; j++){
-		           totalSteps = 2*netsize;
-			   numSteps = 0;
+		        totalSteps = 2*netsize;
+			    numSteps = 0;
 		           	
-		            if ( j == i) { j++;}
-		            if (j>=netsize) {break;}	
-			      endPage = getPage(j);		    
+		        if ( j == i) { j++;}
+		        if (j>=netsize) {break;}	
+			    endPage = getPage(j);		    
 
 			    for (int w = 0; w < netsize*10; w++){
 				while (currentPage != endPage){
- 	                              currentPage = random_walk(currentPage, 1);
-				      numSteps++;
-				      if (numSteps >= netsize){break;}	
+ 	                numSteps++;
+                    currentPage = random_walk(currentPage, 1);
+				    if (numSteps >= netsize){break;}	
 				}
 				if (numSteps < totalSteps){
 					totalSteps = numSteps;
@@ -853,18 +848,23 @@ class Web
 				numSteps = 0;
 				currentPage = startPage;
 			    }
-			    cout << "Shortest path from page " << i << " to page " << j << " is " << totalSteps << std::endl;
-			}
-			
+
+			// cout << "Shortest path from page " << i << " to page " << j << " is " << totalSteps << std::endl; 
+            // Can use to see all shortest paths between any 2 pages
+            shortestPath[vecPosition] = totalSteps;
+            vecPosition++;
+			}	
 		}
-
+        // find ths longest path from all the shortest paths
+        for (int i = 0; i < shortestPath.size(); i++){ 
+            if (shortestPath[i] > longestPath){
+                longestPath = shortestPath[i];
+            }
+        }
+        // cout << "Diameter is " << longestPath << endl;
+        return longestPath;
 	}
-
-
 };
-
-
-
 
 
 int main()
@@ -876,7 +876,6 @@ int main()
     // Adds extra matrix space for artificially inflated page
     int artificialSize = 40;
 
-
     //Web internet(netsize);
     // Initializes Web class called internet
     Web internet(netsize,artificialSize);
@@ -884,7 +883,6 @@ int main()
     int avglinks = 5;
     // Creates random links between pages
     internet.create_random_links(avglinks);
-
 
     // Inflation is my artificially inflated page
     // Google is the current page that is linking to the inflated page.
@@ -907,8 +905,6 @@ int main()
     //This gets the A matrix
     Matrix a = internet.get_distMatrix();
     
-    
-
     // This is the pi_0 vector
     ProbabilityDistribution v = ProbabilityDistribution(artificialSize);
     vector<double> vec = vector<double>(artificialSize, 0);
@@ -925,12 +921,13 @@ int main()
     int mag2;
     int sum;
     int count = 0;
+    int maxCount = 20000;
     double error;
     
 
     //maxErr is error between next iteration to current
     //Stops running when tolerance is met
-    while (maxErr > .00001)
+    while ( maxErr > .00001 || count > maxCount) // break condition
     {
         maxErr = 0;
         vec1 = v.getVec();
@@ -948,27 +945,24 @@ int main()
             }
         }
 
-
-        
         count++;
+        if (count == 1000){break; cout << "count > maxCount";} 
+
     }
     
     
-    cout << "Artifically inflated\n" << v.as_string() << endl;
-     
-    //cout << count << endl;
-    
+    cout << "\nArtifically inflated\n" << v.as_string() << endl;
+
+// Diameter testing ... WORKS 
+// Also shown in fully connected testing, this can be used to specifically test only diameter method
+    /*
+    int diam = internet.diameter();
+    cout << "The diameter of the internet is " << diam << endl;
+    */
 
 
-
-    
-    
-    
-
-    
-//    srand(time(NULL));
-/*
-    vector<int> landing_counts(internet.number_of_pages(),0);
+//TESTING random_walk method
+/*    vector<int> landing_counts(internet.number_of_pages(),0);
 //    for ( auto page : internet.all_pages() ) 
       for ( int run = 1; run < 100; run++)
      {
@@ -988,28 +982,29 @@ int main()
 	cout << "Page " << i << " Landed on: "  << landing_counts.at(i) << ", Total Links: " << internet.getPage(i)->link_amount() <<  std::endl;
 
   }
-  */
-    /*auto connect = internet.fully_connected();
+  */ 
+
+    // TESTING FULLY CONNECTED
+    auto connect = internet.fully_connected();
     if(connect)
     {
         
-        internet.diameter();
-        cout << "Fully Connected" << endl;
+        int diam1 = internet.diameter(); // 
+        cout << "Fully Connected: Diameter of the Internet is " << diam1 << "\n" << endl;
     }
     else
     {
         cout << "Multiple Connected Components" << endl;
     }
-     */
+    
 
-    /* Testing probability distribution
+    // Testing probability distribution
     ProbabilityDistribution prob = ProbabilityDistribution(10);
     prob.set_random();
     prob.normalize();
 
     string g = prob.as_string();
-    cout << g;
-    */
-   
+    cout << "Probability Distribution (without inflation):\n" << g;
+    
     return 0;
 }
