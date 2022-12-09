@@ -1,7 +1,3 @@
-// ADD EID  & add better comments
-// prob can just type straight from git hub
-
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -26,7 +22,7 @@ using std::endl;
 
 class Matrix{
     private:
-   // <magic stuff from you>
+   // Matrix variables
         bool initalized_;
         int rows_;
         int columns_;
@@ -40,13 +36,13 @@ class Matrix{
 
     public:
 
-
+        //Basic, Empty Matrix constructor
         Matrix() //DONE
         { 
             m_ = vector<vector<double>>();
             initalized_ = false;
         }
-
+        // Constructor that takes Rows and columns
         Matrix(int rows, int cols)
         {
             rows_ = rows;
@@ -65,17 +61,17 @@ class Matrix{
             }
             
         }
-
+        // Returns a row of the Matrix
         vector<double> getRow(int index)
         {
             return m_[index];
         }
-
+        // Sets row as a vector
         void setRow(int r, vector<double> row)
         {
             m_[r] = row;
         }
-
+        // Initializes the identity matrix
         void initIdentity(int n) //DONE
         {
             initalized_ = true;
@@ -104,7 +100,7 @@ class Matrix{
         }
         
 
-        
+        // returns true if matrix is N by N
         bool isSquare()
         {
             if (!initalized_)
@@ -114,7 +110,7 @@ class Matrix{
             }
             return rows_ == columns_;
         }
-
+        // Prints the matrix
         void Print(string name) // DONE
         {
             if (!initalized_)
@@ -149,7 +145,7 @@ class Matrix{
             cout << "\n";
         }
 
-
+        // Returns a value in the matrix at given location
         double getVal(int row, int col)
         {
             if (!initalized_)
@@ -165,7 +161,7 @@ class Matrix{
             
             return m_[row][col];
         }
-
+        // Sets matrix value at specific location
         void setVal(int row, int col, double val)
         {
             if (!initalized_)
@@ -181,7 +177,7 @@ class Matrix{
             
             m_[row][col] = val;
         }
-
+        // Returns the diagonal vector of the matrix
         vector<double> Diagonal()
         {
             if (!initalized_)
@@ -202,7 +198,7 @@ class Matrix{
             return v;
         }
 
-
+        // Returns number of rows
         int numRows() // DONE
         {
             if (!initalized_)
@@ -212,6 +208,7 @@ class Matrix{
             }
             return rows_;
         }
+        // Returns number of columns
         int numCols() // DONE
         {
             if (!initalized_)
@@ -224,7 +221,7 @@ class Matrix{
 
 
                 
-
+        // Multiplies a matrix by a value at each index
         Matrix Multiply(double A)
         {
             if (!initalized_)
@@ -248,7 +245,7 @@ class Matrix{
             }
             return temp;
         }
-
+        // Multiplies two matrices together and returns the output
         Matrix Multiply(Matrix B)
         {
             if (!initalized_)
@@ -283,7 +280,7 @@ class Matrix{
             return temp;
             
         }
-
+        // Transposes the matrix 
         Matrix Transpose()
         {
             if (!initalized_)
@@ -307,7 +304,7 @@ class Matrix{
             }
             return temp;
         }
-
+        // Everything Below here is not needed in the matrix class. It's additional functionality from a different project I (Luca LL34958) worked on.
         void setSolveMaxIters(int iters)
         {
             if (!initalized_)
@@ -403,22 +400,22 @@ class ProbabilityDistribution
         {  
             numbers = vector<double>(size, 0);
         }
-
+        // Gets the distribution vector.
         vector<double> getVec()
         {
             return numbers;
         }
-
+        // Sets the distribution vector
         void setVec(vector<double> vec)
         {
             numbers = vec;
         }
-
+        // Gets probability of clicking on a certain page
         float getProb(int index)
         {
             return numbers.at(index);
         }
-
+        // Sets the whole distribution to random
         void set_random()
         {
             float random;
@@ -429,7 +426,7 @@ class ProbabilityDistribution
                 numbers[i] = random;
             }
         }
-
+        // Normalizes distribution so that the sum is 1
         void normalize()
         {
             float sum = 0;
@@ -445,7 +442,7 @@ class ProbabilityDistribution
                 }
             }
         }
-
+        // Returns string form of the vector
         string as_string()
         {
             string str = "";
@@ -456,7 +453,7 @@ class ProbabilityDistribution
 
             return str;
         }
-
+        // Sets the probability of clicking a certain page at the desired index
         void setProb(int index, float num)
         {
             numbers[index] = num;
@@ -486,7 +483,7 @@ class Page{
             name = n;
             
         }
-
+        // Constructor with global ID knowledge
         Page(string n, int id)
         {
             linkamount = 0;
@@ -496,7 +493,7 @@ class Page{
 
             
         }
-
+        // Constructor with global ID and totalPages knowledge
         Page(string n, int id, int length)
         {
             linkamount = 0;
@@ -507,24 +504,25 @@ class Page{
 
             
         }
-
+        // This returns the ID of the page in the web. This is set when initialized in a web.
         auto global_ID()
         {
             return globalID;
         }
-
+        // Returns number of links
         int link_amount()
         {
             return linkamount;
         }
-
+        // Useless
         void link(){
             cout << "there is none" << "\n";
         };
+        // returns string of the page
         auto as_string(){
             return name;
         };
-
+        // Adds a link from this page to another
         void add_link(shared_ptr<Page> p)
         {
             // allocating new link into a point
@@ -534,12 +532,12 @@ class Page{
             linkamount++;
             links.resize(linkamount+1);
         }
-
+        // Clicks a specific page in the vector of pages
         shared_ptr<Page> click(int i)
         {
             return links[i];
         }
-
+        // Clicks on a random page from the vector of pages that the current page is linked to.
         shared_ptr<Page> random_click()
         {
             if(linkamount == 0)
@@ -554,7 +552,7 @@ class Page{
             
             return click(random);
         }
-
+        // Returns distribution of the page
         ProbabilityDistribution distribution()
         {
             shared_ptr<Page> page;
@@ -589,6 +587,7 @@ class Web
 
 
     public:
+    // Basic constructor with web size as parameter
         Web(int size)
         {
             netsize = size;
@@ -602,7 +601,7 @@ class Web
                 pages[i] = make_shared<Page>(name, i, size);
             }
         }
-
+        // Constructor for extra size in matrix needed. Used to make an artificial page look more important
         Web(int size, int artSize)
         {
             artificialSize = artSize;
@@ -619,17 +618,17 @@ class Web
         }
 
         
-
+        // Returns vector of multiple distributions. One for each page on the web
         vector<ProbabilityDistribution> getDistributions()
         {
             return distributions;
         }
-
+        // returns the A matrix in Markov chain
         Matrix get_distMatrix()
         {
             return distributions_matrix;
         }
-
+        // sets distribution with a matrix the size of the web
         void setDistributions()
         {
             distributions = vector<ProbabilityDistribution>(netsize, NULL);
@@ -645,7 +644,7 @@ class Web
 
             }
         }
-
+        // Sets a distribution with extra space in the matrix
         void setArtificialDistributions()
         {
             distributions = vector<ProbabilityDistribution>(artificialSize, NULL);
@@ -662,6 +661,7 @@ class Web
             }
         }
 
+        // Returns a probability distribution based on the next random click taken on the web.
         ProbabilityDistribution globalclick(ProbabilityDistribution currentstate)
         {
             Matrix v = Matrix(1, currentstate.getVec().size());
@@ -700,7 +700,7 @@ class Web
             return k;
         }
         
-
+        // Checks if the web is fully connected or not
         auto fully_connected()
         {
             Matrix m = Matrix(netsize, netsize);
@@ -742,24 +742,24 @@ class Web
             return true;
 
         }
-
+        // Returns vector of pages on the web
         auto all_pages()
         {
             return pages;
         }
-
+        // Returns web size
         auto number_of_pages()
         {
             return netsize;
         }
 
-
-	auto random_page()
+        // Returns a page at random
+	    auto random_page()
         {
              int randNum = rand() % netsize;
              return pages.at(randNum);
         }
-
+        // Creates random links between pages
         void create_random_links(int avgLinks)
         {
             
@@ -785,7 +785,7 @@ class Web
                 pageX->add_link(pageY);
             }
         }
-
+        // This function walks from page to page until the walk is complete or no more pages can be walked to
         auto random_walk(shared_ptr<Page> startingPage, int length)
         {
             //Current page set to starting page to track which page we started at
@@ -805,7 +805,7 @@ class Web
         {
             return pages[n];
         }
-
+    //Prints the web in the terminal
         void print()
         {
             for(int i = 0; i < netsize; i++)
@@ -814,35 +814,38 @@ class Web
             }
         }
 
+    // Returns the diameter of the web
 	int diameter()
 	{
+        
 		
+		// for loop for starting page
+		// 	for loop for ending page
+		// 		while loop for if curr_page != ending page
+		//
+
 		auto currentPage = getPage(1);
 		auto startPage = getPage(1);
 		auto endPage = getPage(2);
 		int numSteps = 0;
 		int totalSteps;
-        int vecPosition = 0;
-        vector<int> shortestPath((netsize*netsize) - netsize); 
-        int longestPath = 0;
 
-        // 2 forloops to go from any page A to any Page B, while loop runs that specific walk many times to find shortest path.
 		for( int i = 0; i < netsize; i++){
 			startPage = getPage(i);		
 		
 			for (int j = 0; j < netsize; j++){
-		        totalSteps = 2*netsize;
-			    numSteps = 0;
+		           totalSteps = 2*netsize;
+			   numSteps = 0;
 		           	
-		        if ( j == i) { j++;}
-		        if (j>=netsize) {break;}	
-			    endPage = getPage(j);		    
+		            if ( j == i) { j++;}
+		            if (j>=netsize) {break;}	
+			      endPage = getPage(j);		    
 
-			    for (int w = 0; w < netsize*10; w++){ // similates the walk from page A to page B netsize*10 # of times to find shortest path from A to B
+			    for (int w = 0; w < netsize*10; w++){
 				while (currentPage != endPage){
- 	                numSteps++;
-                    currentPage = random_walk(currentPage, 1);
-				    if (numSteps >= netsize){break;}	
+ 	                              currentPage = random_walk(currentPage, 1);
+				      numSteps++;
+				      if (numSteps >= netsize){break;}	
 				}
 				if (numSteps < totalSteps){
 					totalSteps = numSteps;
@@ -850,23 +853,11 @@ class Web
 				numSteps = 0;
 				currentPage = startPage;
 			    }
-
-			   // cout << "Shortest path from page " << i << " to page " << j << " is " << totalSteps << std::endl; 
-               // Can use to see all shortest paths between any 2 pages
-                shortestPath[vecPosition] = totalSteps;
-                vecPosition++;
+			    cout << "Shortest path from page " << i << " to page " << j << " is " << totalSteps << std::endl;
 			}
 			
 		}
-        // find ths longest path from all the shortest paths
-        for (int i = 0; i < shortestPath.size(); i++){ 
-            if (shortestPath[i] > longestPath){
-                longestPath = shortestPath[i];
-            }
-        }
 
-        // cout << "Diameter is " << longestPath << endl;
-        return longestPath;
 	}
 
 
@@ -878,21 +869,28 @@ class Web
 
 int main()
 {
+    //Initialized Random
     srand(time(NULL));
+    // Sets the size of the true web
     int netsize = 10;
+    // Adds extra matrix space for artificially inflated page
     int artificialSize = 40;
 
 
     //Web internet(netsize);
-
+    // Initializes Web class called internet
     Web internet(netsize,artificialSize);
 
     int avglinks = 5;
-    
+    // Creates random links between pages
     internet.create_random_links(avglinks);
 
+
+    // Inflation is my artificially inflated page
+    // Google is the current page that is linking to the inflated page.
     shared_ptr<Page> google;
     shared_ptr<Page> inflation;
+    // For loop sets all links to artificial page
     for(int i = netsize; i < artificialSize; i++)
     {
         
@@ -903,37 +901,40 @@ int main()
         google->add_link(inflation);
         
     }
-
+    //The following sets the artificial distribution
     internet.setArtificialDistributions();
     vector<ProbabilityDistribution> dis = internet.getDistributions();
-
+    //This gets the A matrix
     Matrix a = internet.get_distMatrix();
     
+    
+
+    // This is the pi_0 vector
     ProbabilityDistribution v = ProbabilityDistribution(artificialSize);
     vector<double> vec = vector<double>(artificialSize, 0);
     
     double maxErr = 10;
-    
+    //These initialize the pi_0 vector to be random and normalizes
     v.setVec(vec);
     v.set_random();
     v.normalize();
     
-    //v.set_random();
-    //v.normalize();
+    
     vector<double> vec1,vec2;
     int mag1;
     int mag2;
     int sum;
     int count = 0;
     double error;
+    
 
-
-
-    while (maxErr > .00001 || count > 2000) // i added this or statement bc never ending loop was happening sometimes
+    //maxErr is error between next iteration to current
+    //Stops running when tolerance is met
+    while (maxErr > .00001)
     {
         maxErr = 0;
         vec1 = v.getVec();
-
+        // This simulates clicking on pages and seeing what the relative importance of each is after clicking a given amount of times
         v = internet.globalclick(v);
 
         vec2 = v.getVec();
@@ -947,22 +948,25 @@ int main()
             }
         }
 
-        count++;
-        if (count == 1000){cout << "count > 1000";} 
-    }
 
+        
+        count++;
+    }
     
-// why is the output the way it is?
+    
     cout << "Artifically inflated\n" << v.as_string() << endl;
      
-    cout << "COUNT IS " <<  count << endl;
-// Diameter testing ... WORKS 
-    /*
-    int diam = internet.diameter();
-    cout << "The diameter of the internet is " << diam << endl;
-    */
+    //cout << count << endl;
+    
+
+
 
     
+    
+    
+
+    
+//    srand(time(NULL));
 /*
     vector<int> landing_counts(internet.number_of_pages(),0);
 //    for ( auto page : internet.all_pages() ) 
@@ -985,18 +989,18 @@ int main()
 
   }
   */
-    // Checking if internet is fully connected
-    auto connect = internet.fully_connected();
+    /*auto connect = internet.fully_connected();
     if(connect)
     {
-        int diam1 = internet.diameter();
-        cout << "Fully Connected: Diameter of the Internet is " << diam1 << endl;
+        
+        internet.diameter();
+        cout << "Fully Connected" << endl;
     }
     else
     {
         cout << "Multiple Connected Components" << endl;
     }
-    
+     */
 
     /* Testing probability distribution
     ProbabilityDistribution prob = ProbabilityDistribution(10);
